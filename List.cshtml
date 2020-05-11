@@ -1,0 +1,173 @@
+﻿@using Jevic.Web.Extensions;
+@using Jevic.Core.Contracts.Models.AirBag;
+@model Jevic.Web.ViewModels.AirBag.AirBagListViewModel;
+@inject ISelectLists SelectLists;
+@{
+    Model.Title = "AirBag一覧";
+    bool hasUpdateAuth = Model.HasAuthority(AuthorityId.AirbagUpdate);
+}
+
+<form asp-controller="AirBag" asp-action="List" method="post">
+    <div id="AirBagSearchContainer">
+        <div>
+            @if (hasUpdateAuth)
+            {
+                <a class="c_button_round_success_plus u_text_center u_ml_xs js_set_breadcrumb" asp-controller="AirBag" asp-action="Detail"><i class="fa fa-plus"></i>新規登録</a>
+                <button type="button" class="c_button_round_success_plus u_text_center " id="btnInputAirBagExShowDialog" value="0"><i class="fa fa-plus"></i>EXCEL登録</button>
+                <button type="button" class="c_button_round_success_plus u_text_center" id="btnUploadFileHistory"><i class=""></i>Excel取込履歴</button>
+            }
+        </div>
+        <div id="divSearchCondition" class="p_area_create_form">
+            <div class="l_flex_left l_flex_align_center u_mb_sm">
+                <span class="c_textbox_label">Make</span>
+                <span class="l_flex_1">
+                    <input type="text" class="c_textbox" asp-for="SearchCondition.CarMakerNameEng" />
+                </span>
+                <span class="c_textbox_label">Model</span>
+                <span class="l_flex_1">
+                    <input type="text" class="c_textbox" asp-for="SearchCondition.CarModelName" />
+                </span>
+            </div>
+            <div class="l_flex_left l_flex_align_center u_mb_sm">
+                <span class="c_textbox_label">VIN　Number</span>
+                <span class="l_flex_1">
+                    <input type="text" class="c_textbox" asp-for="SearchCondition.ChassisNo" />
+                </span>
+            </div>
+            <div class="l_flex_left l_flex_align_center u_mb_sm">
+                <span class="c_textbox_label">Border Checked</span>
+                <span class="l_flex_1">
+                    <span asp-validation-for="SearchCondition.InspectionDateFrom"></span>
+                    <input type="text" asp-for="SearchCondition.InspectionDateFrom" class="c_textbox c_textbox_date u_display_inline_block js_ui_datepicker"maxlength="10" autocomplete="new-password" />
+
+                    ~
+                    <span asp-validation-for="SearchCondition.InspectionDateTo"></span>
+                    <input type="text" asp-for="SearchCondition.InspectionDateTo" class="c_textbox c_textbox_date u_display_inline_block js_ui_datepicker"maxlength="10" autocomplete="new-password" />
+                </span>
+                <span class="c_textbox_label">EntryDate</span>
+                <span class="l_flex_1">
+                    <span asp-validation-for="SearchCondition.EntryDateFrom"></span>
+                    <input type="text" asp-for="SearchCondition.EntryDateFrom" class="c_textbox c_textbox_date u_display_inline_block js_ui_datepicker"maxlength="10" autocomplete="new-password" />
+
+                    ~
+                    <span asp-validation-for="SearchCondition.EntryDateTo"></span>
+                    <input type="text" asp-for="SearchCondition.EntryDateTo" class="c_textbox c_textbox_date u_display_inline_block js_ui_datepicker"maxlength="10" autocomplete="new-password" />
+                </span>
+            </div>
+
+            <div class="l_flex_left l_flex_align_center u_mb_sm">
+                <span class="c_textbox_label">Alpha Airbag Status</span>
+                <span class="l_flex_1">
+                    <select asp-for="SearchCondition.RecallStatusCode" asp-items="SelectLists.RecallStatuses" class="c_ddl js_select_site">
+                        <option value="">--未選択--</option>
+                    </select>
+                </span>
+                <span class="c_textbox_label">Non-Alpha Airbag Status</span>
+                <span class="l_flex_1 u_ml_sm ">
+                    <select asp-for="SearchCondition.NonAlphaRecallStatusCode" asp-items="SelectLists.NonAlphaRecallStatuses" class="c_ddl js_select_site">
+                        <option value="">--未選択--</option>
+                    </select>
+                </span>
+            </div>
+            <div class="l_flex_left">
+                <button type="button" id="btnSearch" class="c_button_round u_text_center u_flex_right js_search"><i class="fa fa-search fa-fw"></i>検索</button>
+                <button type="button" id="btnClear" class="c_button_round_variable u_text_center u_flex_right js_clear u_ml_sm"><i class="fas fa-eraser"></i> 条件クリア</button>
+            </div>
+        </div> @*divSearchCondition*@
+        <div>
+            <div class=" u_pt_sm">
+                @await Html.PartialFor("_Pagination", m => m.SearchCondition)
+                <divc class="c_table_wrapper">
+                    <table class="c_table u_text_left">
+                        <thead>
+                            <tr>
+                                <th data-sort="@nameof(AirBagSearchResult.ChassisNo)">VIN Number<i class="fa fa-sort"></i></th>
+                                <th data-sort="@nameof(AirBagSearchResult.CarMakerNameEng)">Make<i class="fa fa-sort"></i></th>
+                                <th data-sort="@nameof(AirBagSearchResult.CarModelName)">Model<i class="fa fa-sort"></i></th>
+                                <th data-sort="@nameof(AirBagSearchResult.InspectionDate)">Border Checked<i class="fa fa-sort"></i></th>
+                                <th data-sort="@nameof(AirBagSearchResult.RecallStatusName)">Alpha Airbag Status<i class="fa fa-sort"></i></th>
+                                <th data-sort="@nameof(AirBagSearchResult.NonAlphaRecallStatusName)">Non-Alpha Status<i class="fa fa-sort"></i></th>
+                                <th data-sort="@nameof(AirBagSearchResult.EntryDate)">EntryDate<i class="fa fa-sort"></i></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @*Handlebarsで挿入*@
+                        </tbody>
+                    </table>
+                </divc>
+            </div>
+        </div>
+    </div>
+</form>
+
+<div id="AirBagExModal" class="remodal" data-remodal-options="hashTracking: false, closeOnOutsideClick: true">
+    <button data-remodal-action="close" class="remodal-close"></button>
+    <div class="u_mb_md">
+        <span>AigBagエクセルを取り込み</span>
+    </div>
+    <div class="u_mb_sm">
+        <input type="file" id="flAirBagEx" asp-for="AirBagEx" />
+    </div>
+    <span class="u_hide loading u_mb_sm u_display_block" id="loadingEx"><i class="fa fa-spinner fa-spin u_mr_xs"></i>取り込み中...</span>
+    <div class="form-group">
+        <button data-remodal-action="cancel" class="remodal-cancel" id="btnCloseAirBagExModel">Cancel</button>
+        <button type="submit" id="btnInputAirBagEx" class="remodal-confirm">取込</button>
+    </div>
+</div>
+
+<div id="UploadFileHistory" class="remodal u_minw_100" data-remodal-id="change_modal" data-remodal-options="hashTracking: false, closeOnOutsideClick: true">
+    <button data-remodal-action="close" class="remodal-close"></button>
+    <h3>Excel取り込み履歴</h3>
+    <div class="u_text_left c_table_diff_wrapper">
+        <table id="tblMultiDiffResult" class="c_table_diff2">
+            <thead>
+                <tr class="u_border_bottom">
+                    <th>取込日</th>
+                    <th>取込者</th>
+                    <th>ステータス</th>
+                    <th>エラーメッセージ</th>
+                    <th>ダウンロード</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+<script id="UploadFileHistoryResultTemplate" type="text/x-handlebars-template">
+    {{#each this}}
+    <tr class="u_text_center">
+        <td>{{UpdatedAt}}</td>
+        <td>{{UpdatedBy}}</td>
+        <td>
+            {{UploadStatus}}
+        </td>
+        <td>{{ErrorMessage}}</td>
+        {{#if ErrorBlobId}}
+        <td>
+            <a href="../api/BlobFile/DownloadExcel/{{ErrorBlobId}}" target="_blank"><i class="fa fa-download"></i> ダウンロード</a>
+        </td>
+        {{else}}
+        <td></td>
+        {{/if}}
+    </tr>
+    {{/each}}
+</script>
+
+@section Scripts{
+    <script id="AirBagSearchResultTemplate" type="text/x-handlebars-template">
+        {{#each this}}
+        <tr>
+            <td><a href="/AirBag/Detail?AirBagID={{AirBagId}}" class="u_fill js_set_breadcrumb">{{ChassisNo}}</a></td>
+            <td>{{CarMakerNameEng}}</td>
+            <td>{{CarModelName}}</td>
+            <td>{{InspectionDate}}</td>
+            <td>{{RecallStatusName}}</td>
+            <td>{{NonAlphaRecallStatusName}}</td>
+            <td>{{EntryDate}}</td>
+        </tr>
+        {{/each}}
+    </script>
+    <script type="text/javascript" asp-src-include="~/js/AirBag/*.js"></script>
+
+}

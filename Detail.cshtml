@@ -1,0 +1,94 @@
+﻿@model Jevic.Web.ViewModels.AirBag.AirBagDetailViewModel
+
+@inject Microsoft.ApplicationInsights.AspNetCore.JavaScriptSnippet JavaScriptSnippet
+@inject ISelectLists SelectLists;
+@{
+    Model.Title = "AirBag詳細";
+    bool hasUpdateAuth = Model.HasAuthority(AuthorityId.AirbagUpdate);
+    Model.IsReadOnly = !hasUpdateAuth;
+}
+
+<form asp-controller="AirBag" asp-action="Detail" method="post" autocomplete="off">
+    @if (hasUpdateAuth)
+    {
+    <div class="c_detail_header">
+        @if (Model.IsNew)
+        {
+            <button type="submit" formaction="Register" class="c_button_square_success u_text_center js_confirm_register">登録</button>
+        }
+        else
+        {
+            <button type="submit" formaction="Update" class="c_button_square_info u_text_center js_confirm_update">更新</button>
+            <button type="submit" formaction="Delete" class="c_button_square_danger u_text_center " onclick="return confirm('削除します。よろしいですか？')">削除</button>
+        }
+    </div>
+    }
+    <div class="c_tab_scroll_main">
+        <div id="main_tab" class="c_tab_scroll_tabs">
+            <ul>
+                <li><a href="#common_request">基本情報</a></li>
+            </ul>
+            <div id="common_request" class="c_tab_scroll_tabs_panel">
+                <div class="">
+                    <div class="l_flex_left l_flex_align_center u_mb_sm">
+                        <div class="l_flex_1 l_flex_align_center">
+                            <span class="c_textbox_label u_required">Make</span>
+                            <span class="l_flex_1">
+                                <span asp-validation-for="CarMakerNameEng"></span>
+                                <input type="text" asp-for="CarMakerNameEng" class="c_textbox" maxlength="100" />
+                            </span>
+                            <span class="c_textbox_label u_required">Model</span>
+                            <span class="l_flex_1">
+                                <span asp-validation-for="CarModelName"></span>
+                                <input type="text" asp-for="CarModelName" class="c_textbox" maxlength="100" />
+                            </span>
+                        </div>
+                    </div>
+                    <div class="c_panel_main u_pt_sm">
+                        <div class="l_flex_left l_flex_align_center u_mb_sm">
+                            <div class="l_flex_1 l_flex_align_center">
+                                <span class="c_textbox_label u_required">VIN　Number</span>
+                                <span class="l_flex_1">
+                                    <span asp-validation-for="ChassisNo"></span>
+                                    <input type="text" asp-for="ChassisNo" class="c_textbox" maxlength="100" />
+                                </span>
+                                <span class="c_textbox_label u_required">Border Checked</span>
+                                <span class="l_flex_1">
+                                    <span asp-validation-for="InspectionDate"></span>
+                                    <input type="text" asp-for="InspectionDate" class="c_textbox js_ui_datepicker" autocomplete="new-password" />
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="c_panel_main u_pt_sm">
+                        <div class="l_flex_left l_flex_align_center u_mb_sm">
+                            <div class="l_flex_1 l_flex_align_center">
+                                <span class="c_textbox_label u_required">Alpha Airbag Status</span>
+                                <span class="l_flex_1">
+                                    <span asp-validation-for="RecallStatusCode"></span>
+                                    <span>
+                                    </span>
+                                    <select asp-for="RecallStatusCode" asp-items="SelectLists.RecallStatuses" class="c_textbox c_ddl js_select_site">
+                                        <option selected value="">--未選択--</option>
+                                    </select>
+                                </span>
+                                <span class="c_textbox_label u_required">Non-Alpha Airbag Status</span>
+                                <span class="l_flex_1">
+                                    <span asp-validation-for="NonAlphaRecallStatusCode"></span>
+                                    <select asp-for="NonAlphaRecallStatusCode" asp-items="SelectLists.NonAlphaRecallStatuses" class="c_textbox c_ddl js_select_site">
+                                        <option selected value="">--未選択--</option>
+                                    </select>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" asp-for="AirBagId" />
+</form>
+
+@section Scripts{
+    <script type="text/javascript" src="~/js/AirBag/AirBagDetail.js"></script>
+}
